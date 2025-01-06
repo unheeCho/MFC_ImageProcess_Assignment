@@ -1,0 +1,11 @@
+#include <string>
+#include <vector>
+
+#define lamb 12000
+#define drink 2000
+using namespace std;
+
+int solution(int n, int k) {    
+    int nSellDrink = k - (n/10);       
+    return (nSellDrink * drink) + (n * lamb);
+}

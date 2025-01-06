@@ -1,0 +1,80 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int solution(int a, int b, int c, int d) {
+    int answer = 0;
+    
+    vector<int> result = { a, b, c, d };
+
+    vector<int> nChecker(7, 0);
+    nChecker[a]++;
+	nChecker[b]++;
+	nChecker[c]++;
+	nChecker[d]++;
+
+	vector<int> skipItem;
+	for (int i = 1; i < 7; i++)
+	{
+		if (nChecker[i] == 0)
+			continue;
+
+		skipItem.push_back(i);
+	}
+	
+    int nUniqLevel = skipItem.size();
+    
+	if (nUniqLevel == 1) 	// 1  4 다 같음.
+	{
+		answer = a * 1111;
+	}
+	else if (nUniqLevel == 4) // 4  1111 모두다름
+	{
+		//answer = *min_element(result.begin(), result.end());
+        answer = min(min(min(a, b), c), d);
+	}
+	else if (nUniqLevel == 3) // 3  211
+	{
+		int nIndex1 = 0;
+		int nIndex2 = 0;
+		
+		for (int i = 0; i < nUniqLevel; i++) 
+        {
+			if (nChecker[skipItem[i]] == 1 && nIndex1 == 0)
+			{
+				nIndex1 = skipItem[i];
+				continue;
+			}
+			if (nChecker[skipItem[i]] == 1 && nIndex1 != 0)
+				nIndex2 = skipItem[i];
+		}
+		answer = nIndex1 * nIndex2;
+	}
+	else if (nUniqLevel == 2)  // 2  22 or 31
+	{
+		// 하나만 봐도 알수있다.
+		if (nChecker[skipItem[0]] == 2)
+		{
+            answer = (skipItem[0] + skipItem[1]) * abs(skipItem[0] - skipItem[1]);
+		}
+		else
+		{
+			int nMax, nMin;
+			if (nChecker[skipItem[0]] > nChecker[skipItem[1]])
+			{
+				nMax = skipItem[0];
+				nMin = skipItem[1];
+			}
+			else
+			{
+				nMax = skipItem[1];
+				nMin = skipItem[0];
+			}
+
+			answer = ((10 * nMax) + nMin) * ((10 * nMax) + nMin);
+		}
+	}
+    
+    return answer;
+}

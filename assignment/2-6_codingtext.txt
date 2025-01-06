@@ -1,0 +1,66 @@
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+string ltrim(string _s) {
+    _s.erase(_s.begin(), find_if(_s.begin(), _s.end(),
+            not1(ptr_fun<int, int>(isspace))));
+    return _s;
+}
+
+string rtrim(string _s) {
+    _s.erase(find_if(_s.rbegin(), _s.rend(),
+            not1(ptr_fun<int, int>(isspace))).base(), _s.end());
+    return _s;
+}
+
+string trim(string _s) {
+    return ltrim(rtrim(_s));
+}
+
+vector<string> solution(vector<string> quiz) 
+{
+    vector<string> answer;
+
+	for (int i = 0; i < quiz.size(); i++)
+	{
+		//+, - , = 찾아서 스피릿 =부터 해야됨.
+		string strParsingText = quiz[i];
+		string strResult = trim(strParsingText.substr(strParsingText.find('=') + 1));
+		string strSIk = strParsingText.substr(0, strParsingText.find('=') - 1);
+		string strFirstNum, strSecondNum;
+		bool bAddFlag = true;
+		int nIndex = strSIk.find('+');
+		if (nIndex != -1)
+		{
+			// + 
+			strFirstNum = trim(strSIk.substr(0, nIndex - 1));
+			strSecondNum = trim(strSIk.substr(nIndex + 1));
+		}
+		else
+		{
+			// -  빈문자를 찾아서 구분하자.
+			strFirstNum = trim(strSIk.substr(0, strParsingText.find(' ')));
+			strSecondNum = trim(strSIk.substr(strParsingText.find(' ') + 2));
+
+			bAddFlag = false;
+		}
+		int nCalc;
+		int nFirst = stoi(strFirstNum);  // 첫 번째 숫자
+		int nSecond = stoi(strSecondNum); // 두 번째 숫자
+		int nResult = stoi(strResult);  // 예상 결과
+
+		if (bAddFlag)
+			nCalc = nFirst + nSecond;
+		else
+			nCalc = nFirst - nSecond;
+
+		if(nResult == nCalc)
+			answer.push_back("O");
+		else
+			answer.push_back("X");
+    }
+    return answer;
+}

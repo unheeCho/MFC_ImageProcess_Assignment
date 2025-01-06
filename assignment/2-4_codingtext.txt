@@ -1,0 +1,39 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+
+vector<int> solution(int l, int r) {
+    vector<int> answer;
+    
+	for (int i = l; i <= r; ++i) 
+	{
+		//CString strNum;
+        //strNum.Format(_T("%d"), i);
+        string strNum = to_string(i); 
+		bool bValid = true;
+
+		// 문자열 확인
+		//for (int j = 0; j < strNum.GetLength(); j++)
+        for (int j = 0; j < strNum.length(); j++)
+		{
+			char cCheck = strNum[j];
+			if (cCheck != '0' && cCheck != '5') 
+			{
+				bValid = false;
+				break;
+			}
+		}
+
+		// 있으면 추가
+		if (bValid) {
+			answer.push_back(i);
+		}
+	}
+
+	// 찾은건이 없으면  -1
+	if (answer.empty()) {
+		return { -1 };
+	}
+    return answer;
+}
