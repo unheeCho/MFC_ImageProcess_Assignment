@@ -485,7 +485,10 @@ void CMFCApplication1Dlg::OnBnClickedBtnFileLoad()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	CString str = _T("All files(*.*)|*.*|"); // 모든 파일 표시
 	CFileDialog dlg(TRUE, _T("*.bmp, *.jpg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, str, this);
-	CString strPathName = _T("");
+	CString strPathName = GetModulePath();;
+
+	dlg.m_ofn.lpstrInitialDir = strPathName;
+
 	if (dlg.DoModal() == IDOK)
 	{
 		strPathName = dlg.GetPathName();

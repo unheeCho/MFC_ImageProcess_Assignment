@@ -27,14 +27,13 @@ CImageProcess::~CImageProcess()
 CPoint CImageProcess::GetCirclePoint(CImage& image, COLORREF color, double & out_maxRadius)
 {
     out_maxRadius = 0;
-	int nWidth = image.GetWidth();
-	int nHeight = image.GetHeight();
-	int nPitch = image.GetPitch();
+    int nWidth = image.GetWidth();
+    int nHeight = image.GetHeight();
 
     long long sumX = 0, sumY = 0;
     int darkPixelCount = 0;
-    double maxRadius = 0;
-
+    bool bFirstCheck = false;
+    int maxX = -1;
     for (int y = 0; y < nHeight; ++y)
     {
         for (int x = 0; x < nWidth; ++x)
@@ -47,24 +46,21 @@ CPoint CImageProcess::GetCirclePoint(CImage& image, COLORREF color, double & out
                 sumY += y;
                 darkPixelCount++;
 
-                // 반지름 계산
-                if (darkPixelCount > 1) // 적어도 두 개
-                {
-                    int currentCenterX = static_cast<int>(sumX / darkPixelCount);
-                    int currentCenterY = static_cast<int>(sumY / darkPixelCount);
-                    double distance = sqrt(pow(x - currentCenterX, 2) + pow(y - currentCenterY, 2));
-                    if (distance > maxRadius)
-                        maxRadius = distance;
-                }
+                maxX = max(maxX, x);
             }
         }
     }
+
     if (darkPixelCount == 0)
         return CPoint(-1, -1);
 
     // 찾아낸 각축에 따른 갯수와 합계를 가지고 평균을 내면 각좌표의 중심이다. 
     int centerX = static_cast<int>(sumX / darkPixelCount);
     int centerY = static_cast<int>(sumY / darkPixelCount);
+
+    // 반지름 계산
+    double maxRadius = static_cast<double>(maxX - centerX);
+    
     out_maxRadius = maxRadius;
     return CPoint(centerX, centerY);
 }
@@ -254,11 +250,11 @@ bool CImageProcess::IsInCircle(int i, int j, int nCenterX, int nCenterY, int nRa
 {
     bool bRet = FALSE;
 
-    double dX = i - nCenterX;
-    double dY = j - nCenterY;
+    double dX = static_cast<double>(i - nCenterX);
+    double dY = static_cast<double>(j - nCenterY);
     double dDist = (dX * dX) + (dY * dY);
 
-    if (dDist < nRadius * nRadius)
+    if (dDist < static_cast<double>(nRadius * nRadius))
         bRet = TRUE;
 
     return bRet;
